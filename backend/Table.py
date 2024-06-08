@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class Table:
-    def __init__(self, rows, cols):
+    def __init__(self, name, rows, cols):
+        self.name = name
         self.rows = rows
         self.cols = cols
         self.pk = self.getPrimaryKey()
