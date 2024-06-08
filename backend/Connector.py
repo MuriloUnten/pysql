@@ -6,15 +6,19 @@ from abc import ABC, abstractmethod
 
 class Connector(ABC):
     @abstractmethod
-    def conenct():
+    def conenct(self, database, user, password, port):
         pass
 
     @abstractmethod
-    def getDBInfo():
+    def getDBInfo(self):
         pass
 
     @abstractmethod
-    def getTableInfo():
+    def getTableInfo(self, table):
+        pass
+
+    @abstractmethod
+    def getTables(self):
         pass
 
 
@@ -40,6 +44,15 @@ class MySQLConnector(Connector):
     def getTableInfo(self, table):
         pass
 
+    def getTables(self):
+        self.cursor.execute("SHOW TABLES")
+
+        tables = []
+        for table in self.cursor:
+            tables.append(table)
+
+        return table
+
 
 class PostgresConnector(Connector):
     def __init__(self):
@@ -62,3 +75,13 @@ class PostgresConnector(Connector):
 
     def getTableInfo(self, table):
         pass
+
+    def getTables(self):
+        self.cursor.execute("SHOW TABLES")
+
+        rows = self.cursor.fecthAll()
+
+        tables = []
+        for row in rows:
+            tables.append(row[0])
+        return tables
