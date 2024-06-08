@@ -1,4 +1,5 @@
 from tkinter import *
+from backend.Connector import MySQLConnector, PostgresConnector
 
 def main():
     window = Tk()
@@ -9,12 +10,6 @@ def main():
 
 def initialForm(window):
 
-    def mostrarInformacoes(user_input, psw_input, db_input):
-        user = user_input.get()
-        psw = psw_input.get()
-        db = db_input.get()
-        print(f"usuário: {user}\nsenha: {psw}\nbanco de dados: {db} ")
-    
     #primeira caixa de texto, inserir usuário
     lbl1 = Label(window, text="Nome do usuário:")
     lbl1.grid(column=0, row=0)
@@ -40,9 +35,26 @@ def initialForm(window):
     w = OptionMenu(window, selected_db, *choices)
     w.grid(column=1, row=3, padx=10, pady=5)
     
+    # user = entry_user.get()
+    # password = entry_password.get()
+    # db_name = entry_db.get()
+    # db_type = selected_db
+
+    user = "root"
+    password = "Db_12345678"
+    db_name = "UniSystem"
+    db_type = "MySQL"
+
     #botão para confirmar as escolhas
-    btn_enviar = Button(window, text="Enviar", command= lambda: mostrarInformacoes(entry_user, entry_password, entry_db))
+    btn_enviar = Button(window, text="Enviar", command= lambda: connect(user, password, db_name, db_type))
     btn_enviar.grid(column=1, row=4, padx=10, pady=10)
+
+    def connect(user, password, db_name, db_type):
+        if (db_type=="MySQL"):
+            connector = MySQLConnector()
+            connector.connect(database=db_name, user=user,password=password)
+            print(connector.getTables())
+
 
 if __name__ == "__main__":
     main()

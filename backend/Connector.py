@@ -54,6 +54,7 @@ class MySQLConnector(Connector):
         return table
 
 
+
 class PostgresConnector(Connector):
     def __init__(self):
         pass
@@ -85,3 +86,4 @@ class PostgresConnector(Connector):
         for row in rows:
             tables.append(row[0])
         return tables
+    
