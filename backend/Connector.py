@@ -9,7 +9,7 @@ import Table
 
 class Connector(ABC):
     @abstractmethod
-    def conenct(self, database, user, password, port):
+    def connect(self, database, user, password, port):
         pass
 
     @abstractmethod
@@ -17,7 +17,7 @@ class Connector(ABC):
         pass
 
     @abstractmethod
-    def getTableInfo(self, table):
+    def getTableInfo(self, tableName):
         pass
 
     @abstractmethod
@@ -63,7 +63,7 @@ class MySQLConnector(Connector):
         for table in self.cursor:
             tables.append(table)
 
-        return table
+        return tables
 
 
 class PostgresConnector(Connector):
