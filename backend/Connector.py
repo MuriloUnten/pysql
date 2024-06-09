@@ -3,8 +3,8 @@ import psycopg2 as postgres
 
 from abc import ABC, abstractmethod
 
-import Column as Col
-import Table
+from backend.Table import *
+from backend.Column import *
 
 
 class Connector(ABC):
@@ -45,15 +45,16 @@ class MySQLConnector(Connector):
         pass
 
     def getTableInfo(self, tableName):
-        self.cursor.execute("SHOW COLUMNS FROM ?", tableName)
+        query = "SHOW COLUMNS FROM " + tableName
+        self.cursor.execute(query)
 
         cols = []
         for col in self.cursor:
-            column = Col.MySQLColumn()
+            column = MySQLColumn()
             column.populate(col)
             cols.append(column)
 
-        table = Table.Table(tableName, [], cols)
+        table = Table(tableName, [], cols)
         return table
 
     def getTables(self):
@@ -86,17 +87,20 @@ class PostgresConnector(Connector):
         pass
 
     def getTableInfo(self, tableName):
-        self.cursor.execute('''SELECT
-                            column_name, data_type,
-                            character_maximum_lenght,
-                            is_nullable, column_default
-                            FROM information_schema.columns
-                            WHERE table_name = %s''', tableName)
+        query = (
+            "SELECT"
+            "column_name, data_type,"
+            "character_maximum_lenght,"
+            "is_nullable, column_default"
+            "FROM information_schema.columns"
+            "WHERE table_name = %s"
+        )
+        self.cursor.execute(query, (tableName, ))
 
         results = self.cursor.fecthAll()
         cols = []
         for col in results:
-            column = Col.MySQLColumn()
+            column = MySQLColumn()
             column.populate(col)
             cols.append(column)
 
