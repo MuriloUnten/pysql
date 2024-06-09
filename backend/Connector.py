@@ -61,14 +61,12 @@ class MySQLConnector(Connector):
 
         tables = []
         for table in self.cursor:
-            tables.append(table)
+            tables.append(table[0])
 
         return tables
 
 
-class PostgresConnector(Connector):
-    def __init__(self):
-        pass
+class PostgresConnector(Connector): def __init__(self): pass
 
     def connect(self, database, user, password, port=5432):
         try:
