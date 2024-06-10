@@ -1,11 +1,12 @@
 from tkinter import *
 from backend.Connector import MySQLConnector, PostgresConnector
-
+from tkinter import ttk
 def main():
     window = Tk()
     window.title = "PySQLui"
     window.geometry('720x720')
     initialForm(window)
+    tree(window)
     window.mainloop()
 
 def initialForm(window):
@@ -30,31 +31,50 @@ def initialForm(window):
 
     # caixa para selecionar banco de dados utilizado
     choices = ['MySQL', 'PostGress']
-    selected_db = StringVar(window)
-    selected_db.set('Select Data Base')
+    selected_db = StringVar(window, "Select Database")
     w = OptionMenu(window, selected_db, *choices)
     w.grid(column=1, row=3, padx=10, pady=5)
 
-    # user = entry_user.get()
-    # password = entry_password.get()
-    # db_name = entry_db.get()
-    # db_type = selected_db
-
-    user = ""
-    password = ""
-    db_name = ""
-    db_type = "MySQL"
-
-    #botão para confirmar as escolhas
-    btn_enviar = Button(window, text="Enviar", command=lambda: connect(user, password, db_name, db_type))
-    btn_enviar.grid(column=1, row=4, padx=10, pady=10)
-
-    def connect(user, password, db_name, db_type):
+    def connect(entry_user, entry_password, entry_db, selected_db):
+        user = entry_user.get()
+        password = entry_password.get()
+        db_name = entry_db.get()
+        db_type = selected_db.get()
         if db_type == "MySQL":
             connector = MySQLConnector()
             connector.connect(database=db_name, user=user, password=password)
-            print(connector.getTables())
 
+    #botão para confirmar as escolhas
+    btn_enviar = Button(window, text="Enviar", command=lambda: connect(entry_user, entry_password, entry_db, selected_db))
+    btn_enviar.grid(column=1, row=4, padx=10, pady=10)
+    
+def tree (window):
+
+    
+    # Criar o widget Treeview
+    tree = ttk.Treeview(window)
+
+    # Definir as colunas
+    tree["columns"] = ("coluna1", "coluna2", "coluna3")
+
+    # Configurar as colunas
+    tree.column("#0", width=150, minwidth=150)  
+    tree.column("coluna1", width=100, minwidth=100)  
+    tree.column("coluna2", width=100, minwidth=100 )  
+    tree.column("coluna3", width=100, minwidth=100 )  
+
+    # Definir os cabeçalhos das colunas
+    tree.heading("#0", text="Tabelas")
+    tree.heading("coluna1", text="Campos")
+    tree.heading("coluna2", text="Tipo")
+    tree.heading("coluna3", text="Tamanho")
+
+    # Inserir dados no Treeview
+    tree.insert("", "end", text="Item 1", values=("Value 1-1", "Value 1-2"))
+    tree.insert("", "end", text="Item 2", values=("Value 2-1", "Value 2-2"))
+
+    # Exibir o Treeview
+    tree.grid(column=1, row=4, pady=20, padx=20)
 
 if __name__ == "__main__":
     main()
