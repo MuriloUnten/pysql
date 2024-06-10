@@ -66,6 +66,16 @@ class MySQLConnector(Connector):
 
         return tables
 
+    def execute(self, query, *params):
+        try:
+            self.cursor.execute(query, params)
+        except:
+            print("Error executing query")
+            return ("")
+        finally:
+            result = self.cursor.fetchall()
+            return result
+
 
 class PostgresConnector(Connector):
     def __init__(self):
@@ -116,3 +126,13 @@ class PostgresConnector(Connector):
         for row in rows:
             tables.append(row[0])
         return tables
+
+    def execute(self, query, *params):
+        try:
+            self.cursor.execute(query, params)
+        except:
+            print("Error executing query")
+            return ("")
+        finally:
+            result = self.cursor.fetchAll()
+            return result
