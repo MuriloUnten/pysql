@@ -6,7 +6,7 @@ def main():
     window.title = "PySQLui"
     window.geometry('720x720')
     initialForm(window)
-    tree(window)
+    # tree(window)
     window.mainloop()
 
 def initialForm(window):
@@ -43,14 +43,15 @@ def initialForm(window):
         if db_type == "MySQL":
             connector = MySQLConnector()
             connector.connect(database=db_name, user=user, password=password)
+        table = connector.getTableInfo("app_user")
+        tableDataView(window, table)
 
     #botão para confirmar as escolhas
     btn_enviar = Button(window, text="Enviar", command=lambda: connect(entry_user, entry_password, entry_db, selected_db))
-    btn_enviar.grid(column=1, row=4, padx=10, pady=10)
-    
-def tree (window):
+    btn_enviar.grid(column=1, row=30, padx=10, pady=10)
 
-    
+def tree(window):
+
     # Criar o widget Treeview
     tree = ttk.Treeview(window)
 
@@ -58,10 +59,10 @@ def tree (window):
     tree["columns"] = ("coluna1", "coluna2", "coluna3")
 
     # Configurar as colunas
-    tree.column("#0", width=150, minwidth=150)  
-    tree.column("coluna1", width=100, minwidth=100)  
-    tree.column("coluna2", width=100, minwidth=100 )  
-    tree.column("coluna3", width=100, minwidth=100 )  
+    tree.column("#0", width=150, minwidth=150)
+    tree.column("coluna1", width=100, minwidth=100)
+    tree.column("coluna2", width=100, minwidth=100)
+    tree.column("coluna3", width=100, minwidth=100)
 
     # Definir os cabeçalhos das colunas
     tree.heading("#0", text="Tabelas")
@@ -74,6 +75,29 @@ def tree (window):
     tree.insert("", "end", text="Item 2", values=("Value 2-1", "Value 2-2"))
 
     # Exibir o Treeview
+    tree.grid(column=1, row=4, pady=20, padx=20)
+
+
+def tableDataView(window, table):
+    tree = ttk.Treeview(window)
+
+    tree["columns"] = ("type", "null", "key", "default")
+
+    tree.column("0", width=150, minwidth=150)
+    tree.column("type", width=100, minwidth=100)
+    tree.column("null", width=100, minwidth=100)
+    tree.column("key", width=100, minwidth=100)
+    tree.column("default", width=100, minwidth=100)
+
+    tree.heading("#0", text="name")
+    tree.heading("type", text="type")
+    tree.heading("null", text="null")
+    tree.heading("key", text="key")
+    tree.heading("default", text="default")
+
+    for col in table.cols:
+        tree.insert("", "end", text=col.name, values=(col.type, col.null, col.key, col.default))
+
     tree.grid(column=1, row=4, pady=20, padx=20)
 
 if __name__ == "__main__":
