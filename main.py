@@ -48,8 +48,7 @@ def initialForm(window):
 
     #botão para confirmar as escolhas
     btn_enviar = Button(window, text="Enviar", command=lambda: connect(entry_user, entry_password, entry_db, selected_db))
-    btn_enviar.grid(column=1, row=30, padx=10, pady=10)
-
+    btn_enviar.grid(column=2, row=3, padx=10, pady=10)
 
 def tableDataView(window, table):
     tree = ttk.Treeview(window)
@@ -73,12 +72,40 @@ def tableDataView(window, table):
 
     tree.grid(column=1, row=4, pady=20, padx=20)
 
+def querieTable(window, connector):
+    lbl1 = Label(window, text="Digite sua query")
+    lbl1.grid(column=0, row=5)
+    query = Entry(window, width=30)
+    query.grid(column=1, row=5, padx=10, pady=5)
+    tree = ttk.Treeview(window)
+    btn_executar = Button(window, text="Executar", command=lambda: tabelaPreenchida(query.get()))
+    btn_executar.grid(column=2, row=5, padx=10, pady=10)
+    
+    def clear_tree():
+        for item in tree.get_children():
+            tree.delete(item)
+
+    def tabelaPreenchida(sql):
+        clear_tree()
+        result, cols = connector.execute(query = sql)
+        tree["columns"] = cols
+        tree["show"] = "headings"  
+        for col in cols:
+            tree.column(col, width=100, minwidth=100)
+            tree.heading(col, text=col)
+
+        for row in result:
+            tree.insert("", "end", text=row[0], values=row[0:])
+        tree.grid(column=1, row=6, pady=20, padx=20)
+
+    
 def tablesTree(window, connector):
+
     tree = ttk.Treeview(window)
 
     tree["columns"] = ("name" ,"type", "null", "key", "default")
 
-    tree.column("0", width=150, minwidth=150)
+    tree.column("0", width=100, minwidth=150)
     tree.column("name", width=100, minwidth=100)
     tree.column("type", width=100, minwidth=100)
     tree.column("null", width=100, minwidth=100)
@@ -101,6 +128,10 @@ def tablesTree(window, connector):
             tree.insert(pai, "end", values=(col.name, col.type, col.null, col.key, col.default))
 
     tree.grid(column=1, row=4, pady=20, padx=20)
+    querieTable(window, connector)
+
+
+    
 
 if __name__ == "__main__":
     main()

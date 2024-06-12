@@ -74,7 +74,8 @@ class MySQLConnector(Connector):
             return ("")
         finally:
             result = self.cursor.fetchall()
-            return result
+            column_names = [i[0] for i in self.cursor.description]
+            return result, column_names
 
 
 class PostgresConnector(Connector):
