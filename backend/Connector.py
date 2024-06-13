@@ -98,17 +98,10 @@ class PostgresConnector(Connector):
         pass
 
     def getTableInfo(self, tableName):
-        query = (
-            "SELECT"
-            "column_name, data_type,"
-            "character_maximum_lenght,"
-            "is_nullable, column_default"
-            "FROM information_schema.columns"
-            "WHERE table_name = %s"
-        )
-        self.cursor.execute(query, (tableName, ))
+        query = f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = {tableName}"
+        self.cursor.execute(query)
 
-        results = self.cursor.fecthAll()
+        results = self.cursor.fetchall()
         cols = []
         for col in results:
             column = MySQLColumn()
@@ -119,9 +112,9 @@ class PostgresConnector(Connector):
         return table
 
     def getTables(self):
-        self.cursor.execute("SHOW TABLES")
+        self.cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
 
-        rows = self.cursor.fecthAll()
+        rows = self.cursor.fetchall()
 
         tables = []
         for row in rows:

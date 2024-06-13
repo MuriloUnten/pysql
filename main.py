@@ -12,6 +12,17 @@ def main():
     window.mainloop()
 
 def initialForm(window):
+    def connect(entry_user, entry_password, entry_db, selected_db):
+        user = entry_user.get()
+        password = entry_password.get()
+        db_name = entry_db.get()
+        db_type = selected_db.get()
+        if db_type == "MySQL":
+            connector = MySQLConnector()
+        else:
+            connector = PostgresConnector()
+        connector.connect(database=db_name, user=user, password=password)
+        tablesTree(window, connector)
 
     # primeira caixa de texto, inserir usuário
     lbl1 = Label(window, text="Nome do usuário:")
@@ -37,17 +48,7 @@ def initialForm(window):
     w = OptionMenu(window, selected_db, *choices)
     w.grid(column=1, row=3, padx=10, pady=5)
 
-    def connect(entry_user, entry_password, entry_db, selected_db):
-        user = entry_user.get()
-        password = entry_password.get()
-        db_name = entry_db.get()
-        db_type = selected_db.get()
-        if db_type == "MySQL":
-            connector = MySQLConnector()
-            connector.connect(database=db_name, user=user, password=password)
-        tablesTree(window, connector)
-        #table = connector.getTableInfo("student")
-        #tableDataView(window, table)
+    
 
     #botão para confirmar as escolhas
     btn_enviar = Button(window, text="Enviar", command=lambda: connect(entry_user, entry_password, entry_db, selected_db))
@@ -103,7 +104,6 @@ def querieTable(window, connector):
         exportBtn = Button(window, text="Export", command=lambda: export(result))
         exportBtn.grid(column=1, row=6)
 
-
 def export(queryResult):
     filePath = filedialog.asksaveasfilename(
         initialdir="~/",
@@ -113,8 +113,6 @@ def export(queryResult):
     with open(filePath, "w") as file:
         json.dump(queryResult, file)
         
-
-
 def tablesTree(window, connector):
 
     tree = ttk.Treeview(window)
