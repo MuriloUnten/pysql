@@ -1,6 +1,8 @@
 from tkinter import *
 from backend.Connector import MySQLConnector, PostgresConnector
 from tkinter import ttk
+from tkinter import filedialog
+
 def main():
     window = Tk()
     window.title = "PySQLui"
@@ -97,8 +99,20 @@ def querieTable(window, connector):
         for row in result:
             tree.insert("", "end", text=row[0], values=row[0:])
         tree.grid(column=1, row=6, pady=20, padx=20)
+        exportBtn = Button(window, text="Export", command=lambda: export())
+        exportBtn.grid(column=1, row=7)
 
-    
+
+def export():
+    filePath = filedialog.asksaveasfilename(
+        initialdir="~/",
+        title="Save file",
+        filetypes=(("JSON file", "*.json"), ("CSV file", "*.csv"))
+    )
+    print(filePath)
+    return filePath
+
+
 def tablesTree(window, connector):
 
     tree = ttk.Treeview(window)
