@@ -2,6 +2,7 @@ from tkinter import *
 from backend.Connector import MySQLConnector, PostgresConnector
 from tkinter import ttk
 from tkinter import filedialog
+import json
 
 def main():
     window = Tk()
@@ -98,19 +99,20 @@ def querieTable(window, connector):
 
         for row in result:
             tree.insert("", "end", text=row[0], values=row[0:])
-        tree.grid(column=1, row=6, pady=20, padx=20)
-        exportBtn = Button(window, text="Export", command=lambda: export())
-        exportBtn.grid(column=1, row=7)
+        tree.grid(column=1, row=7, pady=20, padx=20)
+        exportBtn = Button(window, text="Export", command=lambda: export(result))
+        exportBtn.grid(column=1, row=6)
 
 
-def export():
+def export(queryResult):
     filePath = filedialog.asksaveasfilename(
         initialdir="~/",
         title="Save file",
         filetypes=(("JSON file", "*.json"), ("CSV file", "*.csv"))
     )
-    print(filePath)
-    return filePath
+    with open(filePath, "w") as file:
+        json.dump(queryResult, file)
+        
 
 
 def tablesTree(window, connector):
@@ -143,9 +145,6 @@ def tablesTree(window, connector):
 
     tree.grid(column=1, row=4, pady=20, padx=20)
     querieTable(window, connector)
-
-
-    
 
 if __name__ == "__main__":
     main()
