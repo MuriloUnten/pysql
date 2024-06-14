@@ -26,8 +26,10 @@ class PostgresColumn(Column):
     def populate(self, fieldTuple):
         self.name = fieldTuple[0]
         self.type = fieldTuple[1]
-        typeLenght = str(fieldTuple[2])
-        if typeLenght != "null":
-            self.type += f"({typeLenght})"
+        typeLength = str(fieldTuple[2])
+        print(typeLength)
+        if typeLength != "None":
+            self.type += f"({typeLength})"
         self.null = fieldTuple[3]
-        self.default = fieldTuple[4]
+        self.key = fieldTuple[4]
+        self.default = fieldTuple[5]

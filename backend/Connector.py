@@ -31,6 +31,8 @@ class MySQLConnector(Connector):
 
     def connect(self, database, user, password, port=3306):
         try:
+            self.database = database
+
             self.connection = mysql.connect(
                 database=database,
                 user=user,
@@ -84,6 +86,8 @@ class PostgresConnector(Connector):
 
     def connect(self, database, user, password, port=5432):
         try:
+            self.database = database
+
             self.connection = postgres.connect(
                 database=database,
                 user=user,
@@ -98,17 +102,36 @@ class PostgresConnector(Connector):
         pass
 
     def getTableInfo(self, tableName):
-        query = f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = {tableName}"
+        query = ("SELECT column_name, data_type, "
+                 "character_maximum_length, "
+                 "is_nullable, column_default "
+                 "FROM information_schema.columns "
+                 f"WHERE table_name = '{tableName}'")
         self.cursor.execute(query)
-
         results = self.cursor.fetchall()
+
+        # This query returns the name of the column that is the PRIMARY KEY
+        query = ("SELECT a.attname "
+                 "FROM   pg_index i "
+                 "JOIN   pg_attribute a ON a.attrelid = i.indrelid "
+                 "AND a.attnum = ANY(i.indkey) "
+                 f"WHERE  i.indrelid = '{tableName}'::regclass "
+                 "AND    i.indisprimary; ")
+        self.cursor.execute(query)
+        pksTuple = self.cursor.fetchall()
+        pks = []
+        for key in pksTuple:
+            pks.append(key[0])
+
         cols = []
         for col in results:
-            column = MySQLColumn()
+            tmp = col
+            col = (tmp[0], tmp[1], tmp[2], tmp[3], "PRI" if tmp[0] in pks else "NO", tmp[4])
+            column = PostgresColumn()
             column.populate(col)
             cols.append(column)
 
-        table = Table.Table(tableName, [], cols)
+        table = Table(tableName, [], cols)
         return table
 
     def getTables(self):
@@ -128,5 +151,6 @@ class PostgresConnector(Connector):
             print("Error executing query")
             return ("")
         finally:
-            result = self.cursor.fetchAll()
-            return result
+            result = self.cursor.fetchall()
+            column_names = [i[0] for i in self.cursor.description]
+            return result, column_names
