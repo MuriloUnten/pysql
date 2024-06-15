@@ -1,8 +1,4 @@
 def jsonFormat(result, cols):
-    # class JsonObject:
-    #     def __init__(self):
-    #         pass
-
     output = []
     for row in result:
         # rowObject = JsonObject()
@@ -12,7 +8,3 @@ def jsonFormat(result, cols):
         output.append(rowObject)
 
     return output
-
-
-def csvFormat(result, cols):
-    pass

@@ -4,6 +4,7 @@ from utils.formatting import *
 from tkinter import ttk
 from tkinter import filedialog
 import json
+import csv
 
 def main():
     window = Tk()
@@ -114,7 +115,10 @@ def export(queryResult, cols):
         if filePath.endswith(".json"):
             json.dump(jsonFormat(queryResult, cols), file, indent=4)
         elif filePath.endswith(".csv"):
-            pass
+            writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(cols)
+            for row in queryResult:
+                writer.writerow(row)
 
 
 def tablesTree(window, connector):
